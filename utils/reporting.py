@@ -19,7 +19,7 @@ def generate_sdd_markdown(state: dict) -> str:
     sim = state.get("sim", {})
 
     checklist = [
-        ("Kill Switch definido", bool(roles.get("kill_switch_owner"))),
+        ("Kill Switch definido", bool(str(roles.get("kill_switch_owner", "")).strip())),
         ("Auditoría/Logs activados", "Auditoría" in pipeline),
         ("Validación humana (HITL)", "Validación Humana" in pipeline),
         ("Filtro PII", "Filtro PII" in pipeline),
@@ -58,7 +58,8 @@ def generate_sdd_markdown(state: dict) -> str:
         )
         md.append(f"- Coste TI: **{sim.get('coste_ti',0):.2f} €**\n")
         md.append(f"- Coste Operativo: **{sim.get('coste_operativo',0):.2f} €**\n")
-        md.append(f"- Coste Total: **{sim.get('coste_total',0):.2f} €**\n")
+        md.append(f"- Coste Total estimado: **{sim.get('coste_total',0):.2f} €**\n")
+        md.append("- Nota: estimación parcial; no incluye configuración, mantenimiento, licencias ni supervisión.\n")
     else:
         md.append("- (No se ejecutó el simulador)\n")
 
