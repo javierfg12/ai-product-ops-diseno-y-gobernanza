@@ -27,6 +27,12 @@ class ComputeCostsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             CostInputs(100, 500, -0.1, 0.7, 25.0, 15.0)
 
+    def test_rejects_non_finite_values(self):
+        with self.assertRaises(ValueError):
+            CostInputs(100, 500, float("nan"), 0.7, 25.0, 15.0)
+        with self.assertRaises(ValueError):
+            CostInputs(100, 500, 0.8, 0.7, float("inf"), 15.0)
+
     def test_rejects_zero_tickets(self):
         with self.assertRaises(ValueError):
             CostInputs(0, 500, 0.8, 0.7, 25.0, 15.0)
