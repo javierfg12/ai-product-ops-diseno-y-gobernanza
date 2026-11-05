@@ -23,7 +23,14 @@ def generate_sdd_markdown(state: dict) -> str:
         ("Auditoría/Logs activados", "Auditoría" in pipeline),
         ("Validación humana (HITL)", "Validación Humana" in pipeline),
         ("Filtro PII", "Filtro PII" in pipeline),
-        ("RBAC/roles mínimos", bool(roles)),
+        ("Política de datos asignada", bool(str(roles.get("data_policy_owner", "")).strip())),
+        ("Service Owner asignado", bool(str(roles.get("service_owner", "")).strip())),
+        ("SRE Owner asignado", bool(str(roles.get("sre_owner", "")).strip())),
+        ("Data Steward asignado", bool(str(roles.get("data_steward", "")).strip())),
+        ("RBAC/roles mínimos completos", all(
+            str(roles.get(key, "")).strip()
+            for key in ("kill_switch_owner", "data_policy_owner", "service_owner", "sre_owner", "data_steward")
+        )),
         ("SLO definido", guardrails.get("slo_latencia_s", 0) > 0),
     ]
 
