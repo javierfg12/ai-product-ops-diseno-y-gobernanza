@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from math import isfinite
 
 @dataclass(frozen=True)
 class CostInputs:
@@ -14,6 +15,15 @@ class CostInputs:
             raise ValueError("tickets debe ser un entero mayor o igual que 1")
         if isinstance(self.tokens_por_ticket, bool) or not isinstance(self.tokens_por_ticket, int) or self.tokens_por_ticket < 0:
             raise ValueError("tokens_por_ticket debe ser un entero no negativo")
+        numeric_values = {
+            "eur_por_1k_tokens": self.eur_por_1k_tokens,
+            "fcr": self.fcr,
+            "coste_hora_agente": self.coste_hora_agente,
+            "aht_min": self.aht_min,
+        }
+        for name, value in numeric_values.items():
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not isfinite(value):
+                raise ValueError(f"{name} debe ser un número finito")
         if self.eur_por_1k_tokens < 0:
             raise ValueError("eur_por_1k_tokens no puede ser negativo")
         if not 0 <= self.fcr <= 1:
