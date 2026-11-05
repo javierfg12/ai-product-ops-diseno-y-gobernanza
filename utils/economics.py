@@ -9,10 +9,23 @@ class CostInputs:
     coste_hora_agente: float
     aht_min: float
 
+    def __post_init__(self):
+        if isinstance(self.tickets, bool) or not isinstance(self.tickets, int) or self.tickets < 1:
+            raise ValueError("tickets debe ser un entero mayor o igual que 1")
+        if isinstance(self.tokens_por_ticket, bool) or not isinstance(self.tokens_por_ticket, int) or self.tokens_por_ticket < 0:
+            raise ValueError("tokens_por_ticket debe ser un entero no negativo")
+        if self.eur_por_1k_tokens < 0:
+            raise ValueError("eur_por_1k_tokens no puede ser negativo")
+        if not 0 <= self.fcr <= 1:
+            raise ValueError("fcr debe estar entre 0 y 1")
+        if self.coste_hora_agente < 0 or self.aht_min < 0:
+            raise ValueError("Los costes y tiempos no pueden ser negativos")
+
 def compute_costs(x: CostInputs) -> dict:
     """
-    Coste TI: tokens * precio
-    Coste Operativo (SI): (1 - FCR) * coste humano
+    Estimación simplificada: tokens * precio + tickets no resueltos por IA
+    * AHT completo * coste/hora. No incluye configuración, mantenimiento,
+    licencias, supervisión ni otros costes de operación.
     """
     tokens_total = x.tickets * x.tokens_por_ticket
     coste_ti = (tokens_total / 1000.0) * x.eur_por_1k_tokens
